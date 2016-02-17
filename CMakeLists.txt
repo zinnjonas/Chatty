@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8.11)
 ## Use the variable PROJECT_NAME for changing the target name
 set( PROJECT_NAME "chatty" )
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-extra/")
+
 ## Set our project name
 project(${PROJECT_NAME})
 
