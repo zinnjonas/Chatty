@@ -22,11 +22,6 @@ Command* Xmpp::m_commands = nullptr;
 Xmpp::Xmpp()
 {
     // init the library
-
-
-
-
-
     xmpp_initialize();
 
     // create a new context
@@ -181,7 +176,16 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     //send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo.jpg");
     if( in.find("update") != string::npos)
     {
-      cout << m_commands->is_command("update") << endl;
+      xmpp_stanza_t* msg;
+      msg = xmpp_stanza_new(ctx);
+      xmpp_stanza_set_name(msg, "message");
+      xmpp_stanza_set_type(msg, "chat");
+      xmpp_stanza_set_attribute(msg, "to", from.c_str());
+
+      parse_msg(xmpp_conn_get_context(conn), "<span style='font-weight: bolder;'>update</span>", msg);
+      xmpp_send(conn, msg);
+      xmpp_stanza_release(msg);
+
       function_type update = (*m_commands)["update"];
       update( 0, vector<string>(), xmpp_stanza_get_from(stanza));
     }
