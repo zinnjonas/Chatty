@@ -17,10 +17,16 @@ using namespace CryptoPP;
 Xmpp* Xmpp::m_instance = nullptr;
 vector<string> Xmpp::m_bob;
 string Xmpp::stuff;
+Command* Xmpp::m_commands = nullptr;
 
 Xmpp::Xmpp()
 {
     // init the library
+
+
+
+
+
     xmpp_initialize();
     
     // create a new context
@@ -47,6 +53,11 @@ Xmpp* Xmpp::get_instance()
         m_instance = new Xmpp();
     }
     return m_instance;
+}
+
+void Xmpp::register_commands(Command* command)
+{
+  m_commands = command;
 }
 
 void Xmpp::release()
@@ -174,6 +185,10 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     else if( !in.compare("pic") )
     {
         send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo.jpg");
+    }
+    else if( !in.compare("update"))
+    {
+      m_commands["update"]( 0, vector<string>(), xmpp_stanza_get_from(stanza));
     }
     
     return 1;

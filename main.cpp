@@ -6,6 +6,8 @@
 
 #include "mongo.h"
 #include "xmpp.h"
+#include "commands.h"
+#include "command.h"
 
 using namespace std;
 using namespace CryptoPP;
@@ -77,6 +79,9 @@ int main(int argc, char **argv)
         string jabberid = jabberData["user"].str() + "@" + jabberData["domain"].str() + "/"+ jabberData["resource"].str();
         
         Xmpp* xampp = Xmpp::get_instance();
+        Command* command = new Command();
+        command->register_command("update", update);
+        xampp->register_commands(command);
         
         if( !xampp->connect(jabberid, password))
         {

@@ -7,6 +7,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "command.h"
+
 using namespace std;
 
 class Xmpp
@@ -16,6 +18,9 @@ class Xmpp
          * @brief 
          */
         static Xmpp* get_instance();
+
+        static void register_commands(Command* command);
+
         /**
          * @brief 
          */
@@ -59,6 +64,7 @@ class Xmpp
         
         xmpp_ctx_t* m_ctx;
         xmpp_conn_t* m_conn;
+        static Commsand* m_commands;
 };
 
 

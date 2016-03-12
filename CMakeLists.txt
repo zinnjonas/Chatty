@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.3)
 
 ## Use the variable PROJECT_NAME for changing the target name
 set( PROJECT_NAME "chatty" )
@@ -7,12 +7,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-extra/")
 
 ## Set our project name
 project(${PROJECT_NAME})
-
-include_directories(
-    /home/jonas/develop/cpp/Chatty/
-    /home/jonas/develop/cpp/Chatty/
-
-)
 
 add_definitions(
     -DNDEBUG
@@ -29,7 +23,7 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L\".\" ")
 # Define the CXX sources
 set ( CXX_SRCS
     main.cpp mongo.cpp database.cpp xmpp.cpp mime.cpp
-)
+        command.cpp command.h commands.h commands.cpp)
 
 set( CMAKE_VERBOSE_MAKEFILE on)
 
