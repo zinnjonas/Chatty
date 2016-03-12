@@ -4,24 +4,26 @@
 
 #include <unistd.h>
 #include <string.h>
+#include <iostream>
 #include "commands.h"
 
 int update(int argc, vector<string> argv, string from)
 {
 
+  char mystring [100];
   FILE *command = popen("git --work-tree=/home/jonas/Develop/Chatty --git-dir=/home/jonas/Develop/Chatty/.git pull", "r");
 
-  while(!feof(command))
-    ;
+  while(fgets (mystring , 100 , command) != NULL)
+    cout << mystring << endl;
 
   pclose(command);
 
-  unlink("chatty");
+//  unlink("chatty");
 
   command = popen("cmake .. && make", "r");
 
-  while(!feof(command))
-    ;
+  while(fgets (mystring , 100 , command) != NULL)
+    cout << mystring << endl;
 
   pclose(command);
 

@@ -186,10 +186,14 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     {
         send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo.jpg");
     }
-    else if( !in.compare("update"))
+    else if( in.find("update") != string::npos)
     {
-      *m_commands["update"]( 0, vector<string>(), xmpp_stanza_get_from(stanza));
+      cout << m_commands->is_command("update") << endl;
+      function_type update = (*m_commands)["update"];
+      update( 0, vector<string>(), xmpp_stanza_get_from(stanza));
     }
+    else
+     cout << in << endl;
     
     return 1;
 }

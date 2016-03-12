@@ -4,9 +4,17 @@
 
 #include "command.h"
 
+Command::Command()
+{
+}
+
+Command::~Command()
+{
+}
+
 void Command::register_command( string name, function_type function )
 {
-
+  m_commands[name] = function;
 }
 
 bool Command::is_command( string command )
