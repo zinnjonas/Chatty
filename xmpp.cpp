@@ -188,7 +188,7 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     }
     else if( !in.compare("update"))
     {
-      m_commands["update"]( 0, vector<string>(), xmpp_stanza_get_from(stanza));
+      *m_commands["update"]( 0, vector<string>(), xmpp_stanza_get_from(stanza));
     }
     
     return 1;
