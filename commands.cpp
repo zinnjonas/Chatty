@@ -18,8 +18,6 @@ int update(int argc, vector<string> argv, string from)
 
   pclose(command);
 
-//  unlink("chatty");
-
   command = popen("cmake .. && make", "r");
 
   while(fgets (mystring , 100 , command) != NULL)

@@ -28,12 +28,12 @@ Xmpp::Xmpp()
 
 
     xmpp_initialize();
-    
+
     // create a new context
     m_ctx = xmpp_ctx_new(nullptr, nullptr);
     time_t t = time(nullptr);
     string dummy  = std::ctime(&t);
-    SHA1 hash;  
+    SHA1 hash;
     new StringSource( dummy, true, new HashFilter( hash, new HexEncoder( new StringSink(stuff))));
     stuff = stuff.substr(stuff.length()-5);
 }
@@ -42,8 +42,8 @@ Xmpp::~Xmpp()
 {
     xmpp_conn_release(m_conn);
     xmpp_ctx_free(m_ctx);
-    
-    
+
+
     xmpp_shutdown();
 }
 
@@ -72,11 +72,11 @@ bool Xmpp::connect(string jid, string pw)
 {
     // create a connection
     m_conn = xmpp_conn_new(m_ctx);
-    
+
     // 'set account data to connection
     xmpp_conn_set_jid(m_conn, jid.c_str());
     xmpp_conn_set_pass(m_conn, pw.c_str());
-    
+
     // connect
     return (xmpp_connect_client(m_conn, nullptr, 0, Xmpp::connect_handler, m_ctx) == 0);
 }
@@ -84,21 +84,21 @@ bool Xmpp::connect(string jid, string pw)
 void Xmpp::connect_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t status, const int error, xmpp_stream_error_t* const stream_error, void* const userdata)
 {
     xmpp_ctx_t* ctx = static_cast<xmpp_ctx_t*>(userdata);
-    
+
     // Test if we are connected
     if( status == XMPP_CONN_CONNECT)
     {
         cout << "Connected to Account" << endl;
-        
+
         // add handler for an versoin info request
         xmpp_handler_add(conn, Xmpp::version_handler, "jabber:iq:version", "iq", nullptr, ctx);
-        
+
         // add handler for an incomming message
         xmpp_handler_add(conn, Xmpp::message_handler, nullptr, "message", nullptr, ctx);
-        
+
         // add handler for bob's
         xmpp_handler_add(conn, Xmpp::bob_handler, "urn:xmpp:bob", "iq", "get", ctx);
-        
+
         // send initial <presence/> so that we appear online to contacts
         xmpp_stanza_t* pres = xmpp_stanza_new(ctx);
         xmpp_stanza_set_name(pres, "presence");
@@ -115,14 +115,14 @@ void Xmpp::connect_handler(xmpp_conn_t* const conn, const xmpp_conn_event_t stat
 int Xmpp::version_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, void* const userdata)
 {
     xmpp_stanza_t *reply, *query, *name, *version, *text;
-    
+
     char* ns;
     xmpp_ctx_t* ctx = static_cast<xmpp_ctx_t*>(userdata);
     cout << "Handle version request from: " << xmpp_stanza_get_from(stanza) << endl;
-    
+
     reply = xmpp_stanza_reply(stanza);
     xmpp_stanza_set_type(reply, "result");
-    
+
     query = xmpp_stanza_new(ctx);
     xmpp_stanza_set_name(query, "query");
     ns = xmpp_stanza_get_ns(xmpp_stanza_get_children(stanza));
@@ -130,32 +130,32 @@ int Xmpp::version_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     {
         xmpp_stanza_set_ns(query, ns);
     }
-    
+
     name = xmpp_stanza_new(ctx);
     xmpp_stanza_set_name(name, "name");
-    
+
     text = xmpp_stanza_new(ctx);
     xmpp_stanza_set_text(text, Mongo::get_instance()->read_one(BSONObj(), "jabber", "Chatty")["resource"].str().c_str());
     xmpp_stanza_add_child(name, text);
     xmpp_stanza_release(text);
     xmpp_stanza_add_child(query, name);
     xmpp_stanza_release(name);
-    
+
     version = xmpp_stanza_new(ctx);
     xmpp_stanza_set_name(version, "version");
-    
+
     text = xmpp_stanza_new(ctx);
     xmpp_stanza_set_text(text, "1.0");
     xmpp_stanza_add_child(version, text);
     xmpp_stanza_release(text);
     xmpp_stanza_add_child(query, version);
     xmpp_stanza_release(version);
-    
+
     xmpp_stanza_add_child(reply, query);
     xmpp_stanza_release(query);
-    
+
     xmpp_send(conn, reply);
-    
+
     return 1;
 }
 
@@ -164,29 +164,22 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     // do an echo
     string in;
     //xmpp_ctx_t* ctx = static_cast<xmpp_ctx_t*>(userdata);
-    
+
     // if no body do nothing
     if( !xmpp_stanza_get_child_by_name(stanza, "body"))
         return 1;
     // if it is an error do nothing
     if( xmpp_stanza_get_type(stanza) && !in.compare("error"))
         return 1;
-    
+
     in = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
-    
+
     cout << "Incoming message from " << xmpp_stanza_get_from(stanza) << ": " << in << endl;
-    
+
     // Do something with the incoming message
-    
-    if( !in.compare("bild") )
-    {
-        send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo_Color.png");
-    }
-    else if( !in.compare("pic") )
-    {
-        send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo.jpg");
-    }
-    else if( in.find("update") != string::npos)
+
+    //send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo.jpg");
+    if( in.find("update") != string::npos)
     {
       cout << m_commands->is_command("update") << endl;
       function_type update = (*m_commands)["update"];
@@ -194,7 +187,7 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     }
     else
      cout << in << endl;
-    
+
     return 1;
 }
 
@@ -203,7 +196,7 @@ int Xmpp::bob_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, void
     cout << "iq(bob) get request" << endl;
     if( xmpp_stanza_get_child_by_name(stanza, "data"))
     {
-        
+
         string cid = xmpp_stanza_get_attribute(xmpp_stanza_get_child_by_name(stanza, "data"), "cid");
         size_t id = stoi(cid.substr(Mongo::get_instance()->read_one(BSONObj(),"jabber", "Chatty")["resource"].str().length()+stuff.length()));
         cout << cid << ";" << id << endl;
@@ -354,14 +347,14 @@ void Xmpp::send_image( xmpp_conn_t* const conn, string from, string file)
 {
     xmpp_stanza_t* msg;
     xmpp_ctx_t* ctx;
-    
+
     ctx = xmpp_conn_get_context(conn);
-    
+
     msg = xmpp_stanza_new(ctx);
     xmpp_stanza_set_name(msg, "message");
     xmpp_stanza_set_type(msg, "chat");
     xmpp_stanza_set_attribute(msg, "to", from.c_str());
-    
+
     auto index = find(m_bob.begin(), m_bob.end(), file);
     size_t pos;
     if( index == m_bob.end())
@@ -373,14 +366,14 @@ void Xmpp::send_image( xmpp_conn_t* const conn, string from, string file)
     {
         pos = distance(m_bob.begin(), index);
     }
-    
-    
+
+
     string image = "<img src='cid:" + Mongo::get_instance()->read_one(BSONObj(),"jabber", "Chatty")["resource"].str() + stuff + to_string(pos) + "' />";
-    
+
     cout << Mongo::get_instance()->read_one(BSONObj(),"jabber", "Chatty")["resource"].str() + stuff + to_string(pos) << ";" << to_string(pos) << endl;
-    
+
     parse_msg(ctx, image.c_str(), msg);
-    
+
     xmpp_send(conn, msg);
     xmpp_stanza_release(msg);
 }
