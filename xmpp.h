@@ -64,7 +64,7 @@ class Xmpp
         
         xmpp_ctx_t* m_ctx;
         xmpp_conn_t* m_conn;
-        static Commsand* m_commands;
+        static Command* m_commands;
 };
 
 
