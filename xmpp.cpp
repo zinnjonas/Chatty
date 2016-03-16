@@ -189,7 +189,7 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
       xmpp_send(conn, msg);
       xmpp_stanza_release(msg);
 
-      this_thread::sleep_for(chrono::milliseconds(500));
+      this_thread::sleep_for(chrono::seconds::(1));
 
       function_type update = (*m_commands)["update"];
       update( 0, vector<string>(), xmpp_stanza_get_from(stanza));
