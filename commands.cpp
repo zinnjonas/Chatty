@@ -14,14 +14,14 @@ int update(int argc, vector<string> argv, string from)
   FILE *command = popen("git --work-tree=/home/jonas/Develop/Chatty --git-dir=/home/jonas/Develop/Chatty/.git pull", "r");
 
   while(fgets (mystring , 100 , command) != NULL)
-    cout << mystring << endl;
+    cout << mystring;
 
   pclose(command);
 
   command = popen("cmake .. && make", "r");
 
   while(fgets (mystring , 100 , command) != NULL)
-    cout << mystring << endl;
+    cout << mystring;
 
   pclose(command);
 
@@ -36,9 +36,12 @@ int update(int argc, vector<string> argv, string from)
   args[0] = dest;
   args[1] = NULL;
 
+  unlink(dest);
+
   if( execv(dest, args) == -1)
   {
     fprintf(stderr, "Failed to reexecute %s %d %s\n", dest, errno, strerror(errno));
-  }return 0;
+  }
+  return 0;
   exit(1);
 }
