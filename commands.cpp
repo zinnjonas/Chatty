@@ -22,14 +22,13 @@ int update(int argc, vector<string> argv, string from)
   args[1] = NULL;
 
   char mystring [100];
-  FILE *command = popen("git --work-tree=/home/jonas/Develop/Chatty --git-dir=/home/jonas/Develop/Chatty/.git pull", "r");
+  FILE *command = popen("git pull", "r");
 
   while(fgets (mystring , 100 , command) != NULL)
     cout << mystring;
 
   pclose(command);
-
-
+  cout << dest << endl;
   unlink(dest);
 
   command = popen("cmake .. && make", "r");
