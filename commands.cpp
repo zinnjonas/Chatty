@@ -14,7 +14,7 @@ int update(int argc, vector<string> argv, string from)
   char dest[256];
   pid_t pid = getpid();
   sprintf(path, "/proc/%d/exe", pid);
-  memset(dest, 0, sizeof *dest);
+  memset(dest, '\0',256);
   if (readlink(path, dest, 256) == -1)
     perror("readlink");
   char* args[2];
