@@ -178,7 +178,7 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     //send_image(conn, xmpp_stanza_get_from(stanza), "/home/jonas/Logo.jpg");
     if( in.find("update") != string::npos)
     {
-      xmpp_stanza_t* msg;
+     /* xmpp_stanza_t* msg;
       xmpp_ctx_t* ctx = xmpp_conn_get_context(conn);
       msg = xmpp_stanza_new(ctx);
       xmpp_stanza_set_name(msg, "message");
@@ -189,7 +189,7 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
       xmpp_send(conn, msg);
       xmpp_stanza_release(msg);
 
-      this_thread::sleep_for(chrono::seconds(1));
+      this_thread::sleep_for(chrono::seconds(1));*/
 
       function_type update = (*m_commands)["update"];
       update( 0, vector<string>(), xmpp_stanza_get_from(stanza));
