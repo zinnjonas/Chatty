@@ -177,10 +177,10 @@ int Xmpp::message_handler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     if( in.find("update") != string::npos)
     {
       xmpp_stanza_t* msg;
-      msg = xmpp_stanza_new(ctx);
+      msg = xmpp_stanza_new(xmpp_conn_get_context(conn));
       xmpp_stanza_set_name(msg, "message");
       xmpp_stanza_set_type(msg, "chat");
-      xmpp_stanza_set_attribute(msg, "to", from.c_str());
+      xmpp_stanza_set_attribute(msg, "to", xmpp_stanza_get_from(stanza));
 
       parse_msg(xmpp_conn_get_context(conn), "<span style='font-weight: bolder;'>update</span>", msg);
       xmpp_send(conn, msg);
